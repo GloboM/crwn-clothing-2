@@ -3,6 +3,12 @@ import React from 'react';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
 
+import {
+  auth,
+  createUserProfile,
+  createUserWithEmailAndPassword,
+} from '../../firebase/firebase.utils';
+
 import './sign-up.styles.scss';
 class SignUp extends React.Component {
   constructor(props) {
@@ -15,15 +21,26 @@ class SignUp extends React.Component {
     };
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
+    const { email, password, confirmPassword, displayName } = this.state;
     e.preventDefault();
-    this.setState({
-      displayName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    });
-    console.log('submitted');
+    if (!email || !displayName || password != confirmPassword)
+      return alert("Passwords d'ont match");
+    try {
+      const { user } = await createUserWithEmailAndPassword(email, password);
+      await createUserProfile(user, { displayName });
+      this.setState({
+        displayName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+      });
+    } catch (err) {
+      console.log(
+        'error while creating account with email and password : ',
+        err.message
+      );
+    }
   };
 
   handleChange = (e) => {
@@ -37,7 +54,7 @@ class SignUp extends React.Component {
         <h2 className="title">I don't have an account</h2>
         <span className="subtitle">Sign up with your email and password</span>
 
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} className="sign-up-form">
           <FormInput
             label="Display Name"
             type="text"

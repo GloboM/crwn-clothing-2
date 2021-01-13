@@ -3,6 +3,11 @@ import React from 'react';
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
 
+import {
+  signInWithGoogle,
+  signInWithEmailAndPassword,
+} from '../../firebase/firebase.utils';
+
 import './sign-in.styles.scss';
 class SignIn extends React.Component {
   constructor(props) {
@@ -13,16 +18,26 @@ class SignIn extends React.Component {
     };
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
+    const { email, password } = this.state;
     e.preventDefault();
-    this.setState({ email: '', password: '' });
-    console.log('submitted');
+    if (!email || !password) return;
+    try {
+      await signInWithEmailAndPassword(email, password);
+      this.setState({ email: '', password: '' });
+    } catch (err) {
+      console.log(
+        'error while signing in with email and password : ',
+        err.message
+      );
+    }
   };
 
   handleChange = (e) => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
+
   render() {
     return (
       <div className="sign-in">
@@ -33,7 +48,7 @@ class SignIn extends React.Component {
             label="Email"
             type="email"
             name="email"
-            required
+            //required
             value={this.state.email}
             onChange={this.handleChange}
           />
@@ -41,12 +56,20 @@ class SignIn extends React.Component {
             label="Password"
             type="password"
             name="password"
-            required
+            //required
             value={this.state.password}
             onChange={this.handleChange}
           />
-          <CustomButton type="submit">Sign in</CustomButton>
-          <CustomButton>Sign in with google</CustomButton>
+          <div className="buttons">
+            <CustomButton type="submit">Sign in</CustomButton>
+            <CustomButton
+              type="button"
+              isGoogleButton
+              onClick={signInWithGoogle}
+            >
+              Sign in with google
+            </CustomButton>
+          </div>
         </form>
       </div>
     );

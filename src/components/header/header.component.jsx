@@ -1,10 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import { ReactComponent as Logo } from '../../assets/crown.svg';
+
+import { auth } from '../../firebase/firebase.utils';
 import './header.styles.scss';
 
-const Header = () => {
+const Header = ({ currentUser, history }) => {
+  console.log(currentUser);
   return (
     <div className="header">
       <Link to="/" className="logo-container">
@@ -20,9 +23,21 @@ const Header = () => {
         <Link to="/contact" className="option">
           CONTACT
         </Link>
+        {currentUser ? (
+          <div
+            className="option"
+            onClick={() => auth.signOut().then(() => history.push('/auth'))}
+          >
+            Sign out
+          </div>
+        ) : (
+          <Link to="/auth" className="option">
+            Sign In
+          </Link>
+        )}
       </div>
     </div>
   );
 };
 
-export default Header;
+export default withRouter(Header);

@@ -4,6 +4,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  transition: all 0.2s ease-in-out;
 
   .image {
     width: 100%;
@@ -11,6 +13,24 @@
     background-size: cover;
     background-position: center;
     margin-bottom: 5px;
+  }
+
+  .custom-button {
+    position: absolute;
+    opacity: 0.7;
+    width: 80%;
+    top: 250px;
+    display: none;
+  }
+
+  &:hover {
+    .image {
+      opacity: 0.8;
+    }
+    .custom-button {
+      opacity: 0.85;
+      display: flex;
+    }
   }
 }
 

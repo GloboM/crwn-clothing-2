@@ -2,6 +2,10 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ReactComponent as Logo } from '../../assets/crown.svg';
+import { createStructuredSelector } from 'reselect';
+
+import { selectCartVisible } from '../../redux/cart/cart.selector';
+import { selectCurrentUser } from '../../redux/auth/auth.selector';
 
 import CartDropdown from '../cart-dropdown/cart-dropdown-component';
 import CartIcon from '../cart-icon/cart-icon.component';
@@ -9,7 +13,7 @@ import CartIcon from '../cart-icon/cart-icon.component';
 import { auth } from '../../firebase/firebase.utils';
 import './header.styles.scss';
 
-const Header = ({ currentUser, cart, history }) => {
+const Header = ({ currentUser, isVisible, history }) => {
   return (
     <div className="header">
       <Link to="/" className="logo-container">
@@ -36,13 +40,13 @@ const Header = ({ currentUser, cart, history }) => {
         )}
         <CartIcon />
       </div>
-      {cart.isVisible && <CartDropdown />}
+      {isVisible && <CartDropdown />}
     </div>
   );
 };
 
-const mapStateToProps = (state) => ({
-  currentUser: state.auth.currentUser,
-  cart: state.cart,
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+  isVisible: selectCartVisible,
 });
 export default connect(mapStateToProps)(withRouter(Header));
